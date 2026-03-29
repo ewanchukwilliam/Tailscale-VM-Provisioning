@@ -7,8 +7,6 @@ this will contain the configurations required to deploy my NAS tailscale node on
 - terraform 
 - github actions
 
-Use this version for Claude:
-
 This repo provisions and maintains a remote NAS service on a Proxmox cluster using Terraform, Ansible, and GitHub Actions. The design uses option 2: the Proxmox host mounts the large RAID-backed filesystem directly and keeps ownership of the real storage, while only a specific subfolder is shared into a dedicated Debian NAS VM. The storage node acts as a storage hub for backups and file sharing, not as hot shared storage for the rest of the cluster. The NAS VM is intentionally disposable and rebuildable, while the host-owned filesystem remains persistent.
 
 Terraform is responsible only for infrastructure provisioning. It should create the Debian NAS VM in Proxmox, configure CPU, memory, disk, networking, cloud-init, and any VM-level settings needed for the NAS role. Ansible is responsible for guest configuration after provisioning and for ongoing configuration enforcement. It should install and configure Samba for SMB file sharing, install and configure Tailscale inside the VM only, mount the shared host folder inside the VM, create users and groups, apply permissions, and template the Samba configuration. The SMB share should be reachable remotely from macOS Finder over Tailscale using `smb://...`, without exposing SMB publicly to the internet and without routing SMB through NGINX.
