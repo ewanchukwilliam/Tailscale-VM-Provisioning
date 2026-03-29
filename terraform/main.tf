@@ -35,8 +35,8 @@ resource "proxmox_virtual_environment_container" "nas" {
 
     ip_config {
       ipv4 {
-        address = "CHANGE_ME" # e.g. 192.168.1.55/24
-        gateway = "CHANGE_ME" # e.g. 192.168.1.254
+        address = "192.168.1.56/24" # e.g. 192.168.1.55/24
+        gateway = "192.168.1.254" # e.g. 192.168.1.254
       }
     }
   }
@@ -61,10 +61,9 @@ resource "proxmox_virtual_environment_container" "nas" {
     nesting = true
   }
 
-  # Host RAID share mounted into container
+  # Bind mount host RAID share into container
   mount_point {
     path   = "/mnt/nas-share"
-    volume = "CHANGE_ME" # e.g. /mnt/raid/nas-share (bind mount from host)
-    size   = "CHANGE_ME" # e.g. 100G
+    volume = "/mnt/storage/nas-share"
   }
 }

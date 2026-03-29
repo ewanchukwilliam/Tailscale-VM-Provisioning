@@ -13,3 +13,5 @@ terraform/.terraform.tfstate.lock.info
 
 # OS
 .DS_Store
+.envrc
+terraform/terraform.tfvars
