@@ -16,6 +16,16 @@ Terraform is responsible only for infrastructure provisioning. It should create 
 GitHub Actions should be used to automatically reapply and refresh server configuration through Ansible so changes can be committed to the repo and deployed without manually SSHing into the VM to remember setup steps. On pushes or merges, GitHub Actions should run validation steps and then run Ansible to ensure the NAS VM still matches the desired state, including installed packages, mounts, paths, permissions, and service configuration. This is meant to support config refresh and drift correction, not require destroying and reprovisioning the VM for normal changes. For example, if a mounted RAID path, Samba share path, permissions, or service configuration changes in the repo, GitHub Actions should apply that change automatically through Ansible.
 
 Secrets must not be committed to the repo. Proxmox API credentials, Tailscale auth keys, Samba passwords, and SSH private keys should be injected through GitHub secrets, local environment variables, or encrypted Ansible Vault files. The final goal is a reproducible repo that provisions a Debian NAS VM on Proxmox, attaches a host-owned storage path using option 2, keeps that VM configured through repeatable Ansible runs, and exposes files to macOS through Finder using SMB over the Tailscale network rather than public port forwarding.
-ng.
 
-
+## TODO
+- [ ] Fill in CHANGE_ME placeholders in terraform/main.tf (node name, IP, gateway, mount path)
+- [ ] Fill in terraform/terraform.tfvars with Proxmox API credentials and SSH key
+- [ ] Fill in ansible/inventory.ini with container IP and ProxyJump details
+- [ ] Upload Debian 12 LXC template to Proxmox if not already present
+- [ ] Configure host-side bind mount for RAID share into the LXC container
+- [ ] Add all 10 GitHub secrets to repo settings (see .env.example)
+- [ ] Generate a Tailscale auth key from the admin console
+- [ ] Create Proxmox API token with appropriate permissions
+- [ ] Test terraform apply locally before enabling CI
+- [ ] Test ansible-playbook locally before enabling CI
+- [ ] Verify SMB access from macOS Finder over Tailscale (`smb://tailscale-ip/nas`)

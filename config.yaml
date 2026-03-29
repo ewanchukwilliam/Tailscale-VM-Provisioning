@@ -1,0 +1,29 @@
+# ===========================================
+# Shared Configuration (non-secret values)
+# ===========================================
+
+vm:
+  name: nas-vm
+  target_node: CHANGE_ME                  # Proxmox node name, e.g. pve
+  cores: 2
+  memory: 2048                            # MB
+  disk_size: 20G
+  storage_pool: CHANGE_ME                 # e.g. local-lvm
+  template_name: CHANGE_ME                # cloud-init template on Proxmox, e.g. debian-12-cloudinit
+  network_bridge: vmbr0
+
+mount:
+  host_path: CHANGE_ME                    # path on Proxmox host, e.g. /mnt/raid/nas-share
+  guest_mount_point: /mnt/nas-share
+  mount_tag: nas-share                    # 9p mount tag
+
+samba:
+  share_name: nas
+  share_path: /mnt/nas-share
+  workgroup: WORKGROUP
+  valid_users:
+    - nasuser
+
+tailscale:
+  advertise_routes: ""
+  accept_routes: false

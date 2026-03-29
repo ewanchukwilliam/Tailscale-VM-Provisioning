@@ -1,0 +1,108 @@
+- hosts: nas
+  become: true
+  tasks:
+    - name: install packages
+      apt:
+        name:
+          - samba
+          - curl
+          - vim
+          - htop
+          - gnupg
+        state: present
+        update_cache: true
+
+    - name: copy public key
+      authorized_key:
+        user: root
+        key: "{{ lookup('env', 'SSH_PUBLIC_KEY') }}"
+        state: present
+
+    # --- Tailscale ---
+    - name: add tailscale gpg key
+      shell: curl -fsSL https://pkgs.tailscale.com/stable/debian/bookworm.noarmor.gpg | tee /usr/share/keyrings/tailscale-archive-keyring.gpg > /dev/null
+      args:
+        creates: /usr/share/keyrings/tailscale-archive-keyring.gpg
+
+    - name: add tailscale repo
+      copy:
+        content: "deb [signed-by=/usr/share/keyrings/tailscale-archive-keyring.gpg] https://pkgs.tailscale.com/stable/debian bookworm main"
+        dest: /etc/apt/sources.list.d/tailscale.list
+
+    - name: install tailscale
+      apt:
+        name: tailscale
+        state: present
+        update_cache: true
+
+    - name: enable tailscaled
+      systemd:
+        name: tailscaled
+        state: started
+        enabled: true
+
+    - name: check tailscale status
+      command: tailscale status
+      register: ts_status
+      changed_when: false
+      failed_when: false
+
+    - name: authenticate tailscale
+      command: tailscale up --authkey={{ lookup('env', 'TAILSCALE_AUTH_KEY') }} --ssh
+      when: ts_status.rc != 0
+      no_log: true
+
+    # --- Samba ---
+    - name: create samba group
+      group:
+        name: nasgroup
+        state: present
+
+    - name: create samba user
+      user:
+        name: nasuser
+        groups: nasgroup
+        append: true
+        shell: /usr/sbin/nologin
+
+    - name: set samba password
+      shell: (echo "{{ lookup('env', 'SAMBA_USER_PASSWORD') }}"; echo "{{ lookup('env', 'SAMBA_USER_PASSWORD') }}") | smbpasswd -s -a nasuser
+      changed_when: true
+      no_log: true
+
+    - name: set share directory permissions
+      file:
+        path: /mnt/nas-share
+        owner: nasuser
+        group: nasgroup
+        mode: "2770"
+
+    - name: configure smb.conf
+      copy:
+        dest: /etc/samba/smb.conf
+        content: |
+          [global]
+             workgroup = WORKGROUP
+             server string = NAS VM Samba
+             security = user
+             map to guest = never
+             interfaces = tailscale0
+             bind interfaces only = yes
+             log file = /var/log/samba/log.%m
+             max log size = 1000
+
+          [nas]
+             path = /mnt/nas-share
+             browseable = yes
+             read only = no
+             valid users = nasuser
+             create mask = 0660
+             directory mask = 2770
+             force group = nasgroup
+      notify: restart samba
+
+  handlers:
+    - name: restart samba
+      systemd:
+        name: smbd
+        state: restarted
