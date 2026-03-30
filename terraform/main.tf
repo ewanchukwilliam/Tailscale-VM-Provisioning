@@ -9,13 +9,14 @@ terraform {
 }
 
 variable "virtual_environment_endpoint" { type = string }
-variable "virtual_environment_secret" { type = string }
+variable "virtual_environment_password" { type = string }
 variable "ssh_public_key" { type = string }
 
 provider "proxmox" {
-  endpoint  = var.virtual_environment_endpoint
-  api_token = var.virtual_environment_secret
-  insecure  = true
+  endpoint = var.virtual_environment_endpoint
+  username = "root@pam"
+  password = var.virtual_environment_password
+  insecure = true
 
   ssh {
     agent    = true
@@ -24,7 +25,7 @@ provider "proxmox" {
 }
 
 resource "proxmox_virtual_environment_container" "nas" {
-  node_name    = "CHANGE_ME" # your proxmox node name
+  node_name    = "plex" # your proxmox node name
   unprivileged = true
 
   initialization {

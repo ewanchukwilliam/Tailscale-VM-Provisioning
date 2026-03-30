@@ -4,6 +4,7 @@
     - name: install packages
       apt:
         name:
+          - openssh-server
           - samba
           - curl
           - vim
