@@ -28,3 +28,26 @@ Secrets must not be committed to the repo. Proxmox API credentials, Tailscale au
 - [ ] Verify Tailscale connects and container gets a Tailscale IP
 - [ ] Verify SMB access from macOS Finder over Tailscale (`smb://tailscale-ip/nas`)
 
+# login (find ip)
+## in container
+tailscale ip
+
+# macos finder login
+## cmd+k
+smb://ip-addr-here/nas 
+username=usernamegoeshere
+password=passwordgoeshere
+
+# linux mount (permanent)
+## install cifs
+sudo apt install cifs-utils smbclient
+
+## create credentials file
+sudo bash -c 'echo -e "username=nasuser\npassword=YOUR_PASSWORD" > /root/.smbcredentials'
+sudo chmod 600 /root/.smbcredentials
+
+## add fstab entry
+sudo bash -c 'echo "//192.168.1.56/nas /mnt/nas cifs credentials=/root/.smbcredentials,_netdev,nofail 0 0" >> /etc/fstab'
+
+## mount
+sudo mkdir -p /mnt/nas && sudo mount -a
