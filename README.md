@@ -27,3 +27,5 @@ Secrets must not be committed to the repo. Proxmox API credentials, Tailscale au
 - [ ] Generate a Tailscale auth key from the admin console
 - [ ] Verify Tailscale connects and container gets a Tailscale IP
 - [ ] Verify SMB access from macOS Finder over Tailscale (`smb://tailscale-ip/nas`)
+testing tailsclae auth key
+
