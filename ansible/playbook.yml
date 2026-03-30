@@ -46,13 +46,14 @@
     - name: configure tailscaled for userspace networking
       copy:
         dest: /etc/default/tailscaled
-        content: 'FLAGS="--tun=userspace-networking --port=41641"'
-      notify: restart tailscaled
+        content: |
+          PORT=41641
+          FLAGS="--tun=userspace-networking"
 
-    - name: enable tailscaled
+    - name: enable and start tailscaled
       systemd:
         name: tailscaled
-        state: started
+        state: restarted
         enabled: true
 
     - name: check tailscale status
