@@ -64,7 +64,6 @@
     - name: authenticate tailscale
       command: tailscale up --authkey={{ lookup('env', 'TAILSCALE_AUTH_KEY') }} --ssh --tun=userspace-networking
       when: ts_status.rc != 0
-      no_log: true
 
     # --- Samba ---
     - name: create samba group
