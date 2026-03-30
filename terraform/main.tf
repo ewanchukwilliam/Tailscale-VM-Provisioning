@@ -26,7 +26,7 @@ provider "proxmox" {
 
 resource "proxmox_virtual_environment_container" "nas" {
   node_name    = "plex" # your proxmox node name
-  unprivileged = true
+  unprivileged = false
 
   initialization {
     hostname = "nas-vm"
