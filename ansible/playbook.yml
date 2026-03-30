@@ -43,6 +43,12 @@
         state: present
         update_cache: true
 
+    - name: configure tailscaled for userspace networking
+      copy:
+        dest: /etc/default/tailscaled
+        content: 'PORT=41641'
+      notify: restart tailscaled
+
     - name: enable tailscaled
       systemd:
         name: tailscaled
@@ -56,7 +62,7 @@
       failed_when: false
 
     - name: authenticate tailscale
-      command: tailscale up --authkey={{ lookup('env', 'TAILSCALE_AUTH_KEY') }} --ssh
+      command: tailscale up --authkey={{ lookup('env', 'TAILSCALE_AUTH_KEY') }} --ssh --tun=userspace-networking
       when: ts_status.rc != 0
       no_log: true
 
@@ -110,6 +116,11 @@
       notify: restart samba
 
   handlers:
+    - name: restart tailscaled
+      systemd:
+        name: tailscaled
+        state: restarted
+
     - name: restart samba
       systemd:
         name: smbd
