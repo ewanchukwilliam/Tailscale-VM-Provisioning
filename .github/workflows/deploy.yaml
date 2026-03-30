@@ -34,7 +34,7 @@ jobs:
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -p 2222 ${{ secrets.DESKTOP_IP }} >> ~/.ssh/known_hosts
       - name: Run Ansible
-        run: ansible-playbook -i ansible/inventory.ini ansible/playbook.yml --retries 3 --timeout 30
+        run: ansible-playbook -i ansible/inventory.ini ansible/playbook.yml
         env:
           SSH_PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
           TAILSCALE_AUTH_KEY: ${{ secrets.TAILSCALE_AUTH_KEY }}
