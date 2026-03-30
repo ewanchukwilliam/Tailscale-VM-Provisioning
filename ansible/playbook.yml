@@ -46,7 +46,7 @@
     - name: configure tailscaled for userspace networking
       copy:
         dest: /etc/default/tailscaled
-        content: 'PORT=41641'
+        content: 'FLAGS="--tun=userspace-networking --port=41641"'
       notify: restart tailscaled
 
     - name: enable tailscaled
@@ -62,7 +62,7 @@
       failed_when: false
 
     - name: authenticate tailscale
-      command: tailscale up --authkey={{ lookup('env', 'TAILSCALE_AUTH_KEY') }} --ssh --tun=userspace-networking
+      command: tailscale up --authkey={{ lookup('env', 'TAILSCALE_AUTH_KEY') }} --ssh
       when: ts_status.rc != 0
 
     # --- Samba ---
