@@ -16,14 +16,14 @@ GitHub Actions should be used to automatically reapply and refresh server config
 Secrets must not be committed to the repo. Proxmox API credentials, Tailscale auth keys, Samba passwords, and SSH private keys should be injected through GitHub secrets, local environment variables, or encrypted Ansible Vault files. The final goal is a reproducible repo that provisions a Debian NAS VM on Proxmox, attaches a host-owned storage path using option 2, keeps that VM configured through repeatable Ansible runs, and exposes files to macOS through Finder using SMB over the Tailscale network rather than public port forwarding.
 
 ## TODO
-- [ ] Fill in CHANGE_ME placeholders in terraform/main.tf (node name, IP, gateway, mount path)
-- [ ] Fill in terraform/terraform.tfvars with Proxmox API credentials and SSH key
-- [ ] Fill in ansible/inventory.ini with container IP and ProxyJump details
-- [ ] Upload Debian 12 LXC template to Proxmox if not already present
-- [ ] Configure host-side bind mount for RAID share into the LXC container
-- [ ] Add all 10 GitHub secrets to repo settings (see .env.example)
+- [x] Fill in terraform/main.tf (node name, IP, gateway, mount path)
+- [x] Fill in terraform/terraform.tfvars with Proxmox credentials and SSH key
+- [x] Fill in ansible/inventory.ini with container IP and ProxyJump details
+- [x] Configure host-side bind mount for RAID share into the LXC container
+- [x] Test terraform apply locally
+- [x] Add GitHub secrets for SSH, Proxmox, and desktop
+- [ ] Add TAILSCALE_AUTH_KEY GitHub secret
+- [ ] Add SAMBA_USER_PASSWORD GitHub secret
 - [ ] Generate a Tailscale auth key from the admin console
-- [ ] Create Proxmox API token with appropriate permissions
-- [ ] Test terraform apply locally before enabling CI
-- [ ] Test ansible-playbook locally before enabling CI
+- [ ] Verify Tailscale connects and container gets a Tailscale IP
 - [ ] Verify SMB access from macOS Finder over Tailscale (`smb://tailscale-ip/nas`)
