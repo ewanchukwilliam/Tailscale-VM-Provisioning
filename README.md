@@ -30,24 +30,42 @@ Secrets must not be committed to the repo. Proxmox API credentials, Tailscale au
 
 # login (find ip)
 ## in container
+```bash
 tailscale ip
+```
 
 # macos finder login
 ## cmd+k
-smb://ip-addr-here/nas 
+```
+smb://ip-addr-here/nas
 username=usernamegoeshere
 password=passwordgoeshere
+```
 
 # linux mount (permanent)
 ## install cifs
+```bash
 sudo apt install cifs-utils smbclient
+```
 
 ## create credentials file
+```bash
 sudo bash -c 'echo -e "username=nasuser\npassword=YOUR_PASSWORD" > /root/.smbcredentials'
 sudo chmod 600 /root/.smbcredentials
+```
 
 ## add fstab entry
+```bash
 sudo bash -c 'echo "//192.168.1.56/nas /mnt/nas cifs credentials=/root/.smbcredentials,_netdev,nofail 0 0" >> /etc/fstab'
+```
 
 ## mount
+```bash
 sudo mkdir -p /mnt/nas && sudo mount -a
+```
+
+# REMINDER
+## Tailscale auth key needs renewal in 3 months
+```bash
+TAILSCALE_AUTH_KEY=reset me in github actions
+```
